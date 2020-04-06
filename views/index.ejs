@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        background: skyblue;
+        font-family: verdana;
+        color: #fff;
+        text-align: center;
+      }
+
+      .beepbeep {
+        padding-left: 50vh;
+        padding-right: 50vh;
+        text-align: start;
+      }
+
+      h1 {
+        font-size: 48px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      h4 {
+        font-size: 20px;
+        margin: 5px;
+        font-weight: lighter;
+      }
+
+      p {
+        font-size: 16px;
+      }
+
+      button {
+        font-size: 20px;
+        text-align: center;
+      }
+
+      .char_button {
+        font-size: 20px;
+        padding: 2px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Alphabet Guessing Game</h1>
+    <h3>MongoDB Exercise</h3>
+    <br />
+    <% if (step == 0) { %>
+    <form action="/start" method="POST">
+      <button type="submit">Start</button>
+    </form>
+    <% } else if (step <= 4 && step != 0) { %>
+    <h3>
+      Please choose A, B, C, or D to add the <%= current_step %> character to
+      the question.
+    </h3>
+    <h4 class="question">Question: <%= question %></h4>
+    <br />
+    <form action="/set_question" method="POST">
+      <h4 style="display: inline;" class="chosen">Choose:</h4>
+      <input class="char_button" value="A" name="question" type="submit" />
+      <input class="char_button" value="B" name="question" type="submit" />
+      <input class="char_button" value="C" name="question" type="submit" />
+      <input class="char_button" value="D" name="question" type="submit" />
+    </form>
+    <% } else if (step > 4 && step <= 8) { %>
+    <h3>
+      Please choose A, B, C, or D to guess the <%= current_step %> character.
+    </h3>
+    <h4>Answer: <%= answer %></h4>
+    <h4>Character(s) remaining guessing: <%= guessing %></h4>
+    <h4>Fail: <%= fail %></h4>
+    <p></p>
+    <form action="/guessing" method="POST">
+      <h4 style="display: inline;" class="chosen">Choose:</h4>
+      <input class="char_button" value="A" name="guessing" type="submit" />
+      <input class="char_button" value="B" name="guessing" type="submit" />
+      <input class="char_button" value="C" name="guessing" type="submit" />
+      <input class="char_button" value="D" name="guessing" type="submit" />
+    </form>
+      <% } else if (step > 8) { %>
+    <div class="beepbeep">
+      <h3 style="text-align: center;">YOU WIN!</h3>
+      <h4>Answer: <%= answer %></h4>
+      <h4>Fail: <%= fail %></h4>
+      <h4>Start: <%= start %></h4>
+      <h4>End: <%= end %></h4>
+      <h4>Duration (secs): <%= duration %></h4>
+      <h4>Duration (text): <%= duration_text %></h4>
+      <h4>Score: <%= score %></h4>
+      <h4>Top 5:</h4>
+      <ol>
+        <% for (var i = 0; i < top_five.length; i++) { %>
+        <li><%= top_five[i] %></li>
+        <% } %>
+      </ol>
+      <form action="/start" method="POST" style="text-align: center;">
+        <button type="submit">Restart</button>
+      </form>
+      <% } %>
+    </div>
+  </body>
+</html>
