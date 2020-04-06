@@ -1,12 +1,11 @@
 {
-  "name": "docker_web_app",
+  "name": "guessing_game_web_app",
   "version": "1.0.0",
   "description": "Node.js on Docker",
-  "author": "First Last <first.last@example.com>",
+  "author": "Chananchida Fuachai",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "node server.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
