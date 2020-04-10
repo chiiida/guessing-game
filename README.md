@@ -9,7 +9,7 @@
 ```
 $ docker start [mongodb] // replace mongodb with the name of your container
 ```
-2. Run the script (on the directory that have and save level as `server.js`)
+2. Run the script (on the directory that have and same level as `server.js`)
 ```
 $ npm run dev
 ```
