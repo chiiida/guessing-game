@@ -36,6 +36,7 @@ client.connect(function (err) {
   app.get('/', (req, res) => {
     
     col.find().limit(1).sort({ $natural: -1 }).toArray(function (err, docs) {
+      
       assert.equal(null, err);
       if (err) return console.log(err)
 
@@ -70,7 +71,7 @@ client.connect(function (err) {
           step: docs[0].step,
           question: docs[0].question.join(" "),
           guessing: docs[0].guessing.join(" "),
-          answer: docs[0].answer.join(" "),
+          answer: docs[0].answer.slice(0,4).join(" "),
           current_step: current_step,
           fail: docs[0].fail,
           start: docs[0].gameStart,
@@ -139,7 +140,7 @@ client.connect(function (err) {
           $push: { answer: chosen },
           $inc: { step: 1 }
         });
-
+        
         if (index == 3) {
           const gameStart = new Date(docs[0].gameStart);
           const gameEnd = new Date();
