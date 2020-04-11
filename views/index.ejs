@@ -48,6 +48,7 @@
     <h3>MongoDB Exercise</h3>
     <br />
     <% if (step == 0) { %>
+    <!-- <button style="text-align: center;"" onclick="start()">Start</button> -->
     <form action="/start" method="POST">
       <button type="submit">Start</button>
     </form>
@@ -96,10 +97,12 @@
         <li><%= top_five[i] %></li>
         <% } %>
       </ol>
+      <!-- <button style="text-align: center;"" onclick="start()">Restart</button> -->
       <form action="/start" method="POST" style="text-align: center;">
         <button type="submit">Restart</button>
       </form>
       <% } %>
     </div>
   </body>
+  <script src="../index.js"></script>
 </html>

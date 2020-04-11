@@ -2,12 +2,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require("mongodb").ObjectID
 const assert = require('assert');
 // Connection URL
-const url = 'mongodb://localhost/pantip';
+const url = 'mongodb://localhost/guessinggame';
 
 // Database Name
-const dbName = 'pantip';
+const dbName = 'guessinggame';
 // Create a new MongoClient
 const client = new MongoClient(url);
 
@@ -20,21 +21,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs')
 
-const schema = {
-  "stage": 1,
-  "question": ["_", "_", "_", "_"],
-  "guessing": ["*", "*", "*", "*"],
-  "answer": [],
-  "score": {
-    score: 0,
-    duration_secs: 0,
-    duration_text: ""
-  },
-  "fail": 0,
-  "step": 0,
-  "gameStart": null,
-  "gameEnd": null
-}
+let objID = new ObjectID();;
 
 // Use connect method to connect to the Server
 client.connect(function (err) {
@@ -49,7 +36,6 @@ client.connect(function (err) {
   app.get('/', (req, res) => {
     
     col.find().limit(1).sort({ $natural: -1 }).toArray(function (err, docs) {
-      console.log(docs);
       assert.equal(null, err);
       if (err) return console.log(err)
 
@@ -100,11 +86,29 @@ client.connect(function (err) {
   });
 
   app.post('/start', (req, res) => {
+    objID = new ObjectID();
+
+    const schema = {
+      _id: objID,
+      stage: 1,
+      question: ["_", "_", "_", "_"],
+      guessing: ["*", "*", "*", "*"],
+      answer: [],
+      score: {
+        score: 0,
+        duration_secs: 0,
+        duration_text: ""
+      },
+      fail: 0,
+      step: 0,
+      gameStart: null,
+      gameEnd: null
+    }
+
     col.insertOne(schema, (err, docs) => {
       if (err) return console.log(err)
 
       console.log('saved to database');
-      console.log(docs);
       col.updateOne({ step: 0 }, { $set: { step: 1 } });
       res.redirect('/')
     })
@@ -115,7 +119,7 @@ client.connect(function (err) {
     col.updateOne({ stage: 1, question: "_" }, { $set: { 'question.$': chosen }, $inc: { step: 1 } })
     col.find({}).limit(1).sort({ $natural: -1 }).toArray(function (err, docs) {
       if (docs[0].step == 4 && docs[0].fail == 0) {
-        col.updateOne({ stage: 1, step: 5 }, { $set: { stage: 2, gameStart: new Date() } })
+        col.updateOne({ step: 5 }, { $set: { stage: 2, gameStart: new Date() } })
       }
     });
     res.redirect('/')
@@ -130,15 +134,13 @@ client.connect(function (err) {
       const index = (step == 5 ? 0 : (step == 6 ? 1 : (step == 7 ? 2 : 3)));
 
       if (docs[0].question[index] == chosen) {
-        col.updateOne({ stage: 2, guessing: "*" }, {
+        col.updateOne({ guessing: "*" }, {
           $pop: { guessing: 1 },
           $push: { answer: chosen },
           $inc: { step: 1 }
         });
 
         if (index == 3) {
-          console.log(docs[0].stage);
-          console.log(docs[0].step);
           const gameStart = new Date(docs[0].gameStart);
           const gameEnd = new Date();
           let time_diff = gameEnd.getTime() - gameStart.getTime()
@@ -161,7 +163,7 @@ client.connect(function (err) {
             $push: { answer: chosen }
           })
         }
-      } else { col.updateOne({ stage: 2, guessing: "*" }, { $inc: { fail: 1 } }) }
+      } else { col.updateOne({ guessing: "*" }, { $inc: { fail: 1 } }) }
     });
     res.redirect('/')
   });
